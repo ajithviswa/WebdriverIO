@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="[% title %]">
+    <title>Trend Report</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <style type="text/css">
+      body {background-color: #fafafa;font-weight: 200; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
+      h1, .h1, h2, .h2, h3, .h3 {margin: 10px;font-weight: bold;}
+      h1, .h1 {font-size: 30px;}
+      h2, .h2 {font-size: 15px;}
+      h3, .h3 {font-size: 20px;}
+     .jobdiv {width:30%;height:430px;border: 1px solid #ECEFF1;float:left;margin-right:3%;margin-bottom:3%;}
+     .summaryDiv {width:96%;height:390px;border: 1px solid #ECEFF1;float:left;margin-bottom:3%;}
+     .summaryDiv span {padding:50px;}
+     .jobdiv span {padding:50px;}
+     .jobdetails {float:left;padding-left:17%;width:100%;}
+     .summaryDetails {float:left;padding-left:13%;width:40%;}
+     .summaryDetails ul {margin-top:10%;width:320px;}
+     .summaryDetails ul li{margin: 10px 0;}
+     .chart{float:left;width:100%;padding-left:15%;}
+     .summaryChart{float:left;width:60%;padding-left:15%;margin-top:-20px;}
+     .duration{float:left;width:100%;height:auto;display: flex;justify-content: flex-end;}
+     .title{width:100%;background-color: #DCDCDC;height:82px;margin-bottom:4%;}
+     #content{float:left;width:100%;height:auto;}
+     .view{width:100%;display: flex;justify-content: flex-end;color:dimgrey;}
+      .google-visualization-table-td  {
+      text-align: left !important;
+      }
+      th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: rgb(83, 133, 180);
+        border-color: rgb(151, 150, 168) !important;
+        color: white;
+      }
+      .oddTableRow {background-color:rgb(232, 246, 247);}
+      .tableRow { background-color:rgb(246, 253, 253); } 
+      tr:hover {background-color: rgba(233, 235, 154, 0.76) !important;}
+      .selectedTableRow {background-color: rgba(141, 186, 238, 0.76) !important;}
+    </style>
+  </head>
+ <body>
+    <div class="container">
+      <div class="page-header">
+        <h1>Exploratory Test Report</h1>
+        <br/>
+        <h4>Date : REPORT-DATE</h4>
+      </div>
+        <br/>
+        <div id="content"></div>
+        <div id="table_div"></div>
+        <br/><br/>
+        <div class="view">*Best view in Desktop mode</div>
+    </div>
+    <script type="text/javascript">
+      $( document ).ready(function() {
+        var builds = [];
+        var buildResult = [[]];
+        var testCase = [];
+        var testCaseData = [];
+        var rowArr = [];
+        var obj = getObj();
+        $.each(obj, function(objKey,objValue) {
+          builds.push(objValue["BUILDNUMBER"].trim());            
+          buildResult[objValue["TCID"]]=[];
+          testCaseData[objValue["TCID"]] = [];
+        });
+
+        $.each(obj, function(objKey,objValue) {
+          buildResult[objValue["TCID"]][objValue["BUILDNUMBER"]] = objValue["TCRESULT"];
+        });
+
+        var uniqueBuilds = [];
+        $.each(builds, function(i, el){
+            if($.inArray(el, uniqueBuilds) === -1) uniqueBuilds.push(el);
+        });
+        builds = uniqueBuilds;
+        $.each(obj, function(objKey,objValue) {
+          testCaseData[objValue["TCID"]]['desc'] =  objValue["TCDESC"];            
+          $.each(builds, function(buildKey,buildValue) { 
+              testCaseData[objValue["TCID"]][buildValue] =  buildResult[objValue["TCID"]][buildValue];
+          });
+        });
+
+        for (var key in testCaseData) {
+          var value = testCaseData[key];
+          var tempArr = [];
+          tempArr.push(key);
+          tempArr.push(testCaseData[key]['desc']);
+          for (var buildKey in value) {
+            if(buildKey !== "desc"){
+              var status = value[buildKey]
+              switch(status){
+                case 'pass':
+                status = "&#10004;";
+                break;
+                case 'fail':
+                status = "&#10006;";
+                break;
+                default:
+                status = "&#9866;";
+              }
+              tempArr.push(status);
+                 }
+                }
+                rowArr.push(tempArr);
+              }
+              var options = {
+                allowHtml: true, 
+                showRowNumber: true, 
+                width: '100%', 
+                height: '100%',
+                cssClassNames: { 
+                  headerRow: 'headerRow',
+                  tableRow: 'tableRow',
+                  oddTableRow: 'oddTableRow',
+                  selectedTableRow: 'selectedTableRow',
+                  headerCell: 'headerCell',
+                  tableCell: 'tableCell',
+                  rowNumberCell: 'rowNumberCell'
+                }    
+              };
+              google.charts.load('current', {'packages':['table']});
+              google.charts.setOnLoadCallback(function () {
+                var data = new google.visualization.DataTable();
+                data.addColumn('string', 'Test Case');
+                data.addColumn('string', 'Function');
+                $.each(builds, function(buildObj,buildValue) {
+                  data.addColumn('string', buildValue);
+                });
+                data.addRows(rowArr);
+                var table = new google.visualization.Table(document.getElementById('table_div'));
+                var formatter = new google.visualization.ColorFormat();
+                formatter.addRange('&#9866;', '&#9867;', 'white', 'gainsboro');
+                formatter.addRange('&#10004;', '&#10005;', 'white', '#95de97');
+                formatter.addRange('&#10006;', '&#10007;', 'white', '#f04d5d');
+                var i = 2;
+          $.each(builds, function(buildObj,buildValue) {
+            formatter.format(data, i);
+            i++;
+          });
+          table.draw(data, options, {allowHtml: true, showRowNumber: false, width: '100%', height: '100%'});
+        });
+        function getObj(){
+          var data = 'TEXT TO REPLACE';
+          data = replaceAll(data, "}][{", "},{");
+          var obj = jQuery.parseJSON(data);
+          return obj;
+        }
+        function escapeRegExp(string){
+            return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        }
+        function replaceAll(str, term, replacement) {
+          return str.replace(new RegExp(escapeRegExp(term), 'g'), replacement);
+        }
+      });
+  </script>
+<script>
+ window.onload = function() {
+var x = document.getElementsByClassName("google-visualization-table-td");
+for (i = 0; i < x.length; i++) {
+    if(x[i].innerText === '&#10004;')
+        x[i].style.backgroundColor = "green";
+    else if(x[i].innerText === 'fail')
+        x[i].style.backgroundColor = "red";
+}
+}
+</script>
+  </body>
+</html>

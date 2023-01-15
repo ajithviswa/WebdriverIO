@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="[% title %]">
+
+    <title>HTML Report</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <style type="text/css">
+    body {
+      background-color: #fafafa;
+      font-weight: 200;
+    }
+    h1, .h1, h2, .h2, h3, .h3 {
+      margin: 10px;
+      font-weight: 200;
+    }
+    h1, .h1 {
+      font-size: 30px;
+    }
+    h2, .h2 {
+      font-size: 24px;
+    }
+    h3, .h3 {
+      font-size: 20px;
+    }
+
+    .table-bordered>tbody>tr>td, .table-bordered>tfoot>tr>td {
+      padding-left: 20px;
+      padding-right: 20px;
+      padding-bottom: 10px;
+      padding-top: 10px;
+      border-color: #ECEFF1;
+      text-align: center;
+    }
+
+    .test-pass, .suite-pass {
+      background-color: #C8E6C9;
+      padding-right: 20px;
+      padding-bottom: 10px;
+      padding-top: 10px;
+      border-color: #ECEFF1;
+      text-align: center;
+    }
+
+  
+    .test-fail, .suite-fail {
+      background-color: #FFCDD2;
+      text-align: center;
+    }
+
+    .test-pending, .suite-pending {
+      background-color: #B3E5FC;
+      text-align: center;
+    }
+
+    .test-total, .suite-total {
+      background-color: #cbb2fc;
+      text-align: center;
+    }
+
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header"><h1>PROJECT-TITLE</h1></div>
+      <h2>Summary</h2>
+      <table class="table">
+        <thead>
+          <th>Key</th>
+          <th>Value</th>
+        </thead>
+        <tbody>
+          <tr><td>Start</td><td>startTime</td></tr>
+          <tr><td>End</td><td>endTime</td></tr>
+          <tr><td>Duration</td><td>durationTime</td></tr>
+          <tr><td>Scenario Breakdown</td><td>
+            <table class="table table-bordered">
+              <tr>
+                <td class='test-total'>Total</td><td class='test-pass'>Passed</td><td class='test-fail'>Failed</td><td class='test-pending'>Pending</td>
+              </tr>
+              <tr>
+                <td id="steps_total">scenarioTotalCount</td><td id="steps_pass">scenarioPassCount</td><td id="steps_fail">scenarioFailCount</td><td id="steps_pending">scenarioPendingCount</td>
+              </tr>
+            </table>
+            <tr><td>Step Breakdown</td><td>
+              <table class="table table-bordered">
+                <tr>
+                  <td class='test-total'>Total</td><td class='test-pass'>Passed</td><td class='test-fail'>Failed</td><td class='test-pending'>Pending</td>
+                </tr>
+                <tr>
+                  <td id="steps_total">stepTotalCount</td><td id="steps_pass">stepPassCount</td><td id="steps_fail">stepFailCount</td><td id="steps_pending">stepPendingCount</td>
+                </tr>
+              </table>
+        </tbody>
+      </table>
+  </body>
+</html>
+
+
+
+
+

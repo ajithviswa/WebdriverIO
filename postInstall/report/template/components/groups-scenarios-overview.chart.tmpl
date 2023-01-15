@@ -1,0 +1,154 @@
+<div class="x_title">
+    <h2><%= groupName %></h2>
+    <ul class="nav navbar-right panel_toolbox">
+        <li>
+            <a class="collapse-link">
+                <i class="fa fa-chevron-up"></i>
+            </a>
+        </li>
+    </ul>
+    <div class="clearfix"></div>
+</div>
+<div class="x_content">
+    <table class="chart">
+        <tr>
+            <th>
+                <p>Chart</p>
+            </th>
+            <th>
+                <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
+                    <p class="">Status</p>
+                </div>
+                <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">
+                    <p class="">Progress</p>
+                </div>
+            </th>
+        </tr>
+        <tr>
+            <td class="chart">
+                <canvas id="groups-scenario-chart-<%= groupName %>" class="groups" name="groups-scenario-chart"></canvas>
+                <div class="total"><%= scenarios.total%></div>
+            </td>
+            <td>
+                <table class="tile_info">
+                    <tr>
+                        <td style="width:60%">
+                            <p data-toggle="tooltip" data-placement="left" title="Scenario passed">
+                                <i class="fa fa-check-circle passed-color"></i>
+                                Passed: <%= scenarios.passed %>
+                            </p>
+                        </td>
+                        <td class="percentage" style="text-align: left"><%= scenarios.passedPercentage %> %</td>
+                    </tr>
+                    <tr>
+                        <td style="width:60%">
+                            <p data-toggle="tooltip" data-placement="left" title="Scenario failed">
+                                <i class="fa fa-exclamation-circle failed-color"></i>
+                                Failed: <%= scenarios.failed %>
+                            </p>
+                        </td>
+                        <td class="percentage" style="text-align: left"><%= scenarios.failedPercentage %> %</td>
+                    <% if (scenarios.ambiguous > 0) { %>
+                    <tr>
+                        <td style="width:60%">
+                            <p data-toggle="tooltip" data-placement="left"
+                               title="Scenario has double step implementation and failed because of that.">
+                                <i class="fa fa-flash ambiguous-color"></i>
+                                Ambiguous
+                            </p>
+                        </td>
+                        <td class="percentage" style="text-align: left"><%= scenarios.ambiguousPercentage %> %</td>
+                    </tr>
+                    <% } %>
+                    <% if (scenarios.notDefined > 0) { %>
+                    <tr>
+                        <td style="width:60%">
+                            <p data-toggle="tooltip" data-placement="left" title="Scenario has no step implmentation.">
+                                <i class="fa fa-question-circle not-defined-color"></i>
+                                Not defined
+                            </p>
+                        </td>
+                        <td class="percentage" style="text-align: left"><%= scenarios.notdefinedPercentage %> %</td>
+                    </tr>
+                    <% } %>
+                    </tr>
+                    <% if (scenarios.pending > 0) { %>
+                    <tr>
+                        <td style="width:60%">
+                            <p data-toggle="tooltip" data-placement="left" title="Scenario is pending">
+                                <i class="fa fa-minus-circle pending-color"></i>
+                                Pending
+                            </p>
+                        </td>
+                        <td class="percentage" style="text-align: left"><%= scenarios.pendingPercentage %> %</td>
+                    </tr>
+                    <% } %>
+                    <% if (scenarios.skipped > 0) { %>
+                    <tr>
+                        <td style="width:60%">
+                            <p data-toggle="tooltip" data-placement="left" title="Scenario is skipped">
+                                <i class="fa fa-arrow-circle-right skipped-color"></i>
+                                Skipped
+                            </p>
+                        </td>
+                        <td class="percentage" style="text-align: left"><%= scenarios.skippedPercentage %> %</td>
+                    </tr>
+                    <% } %>
+                </table>
+            </td>
+        </tr>
+        <% if (!overviewPage && suite.displayDuration) { %>
+            <tr>
+                <th> Total duration:</th>
+                <tr><td><%= feature.time %></td></tr>
+            </tr>
+        <% } %>
+    </table>
+</div>
+
+<!-- Chart.js -->
+<script src="assets/js/Chart.min.js"></script>
+
+<!-- Custom -->
+<script>
+  var groupSenarioOptions = {
+      legend: false,
+      responsive: false
+  };
+
+  var chartId = "groups-scenario-chart-<%= groupName %>";
+
+  new Chart(document.getElementById(chartId), {
+      type: 'doughnut',
+      tooltipFillColor: "rgba(51, 51, 51, 0.55)",
+      data: {
+          labels: [
+              "Passed",
+              "Failed",
+              "Ambiguous",
+              "Not Defined",
+              "Pending",
+              "Skipped"
+          ],
+          datasets: [{
+              data: [
+                  <%= scenarios.passed %>,
+                  <%= scenarios.failed %>,
+                  <%= scenarios.ambiguous %>,
+                  <%= scenarios.notDefined %>,
+                  <%= scenarios.pending %>,
+                  <%= scenarios.skipped %>
+              ],
+              backgroundColor: [
+                  "#26B99A",
+                  "#E74C3C",
+                  "#b73122",
+                  "#F39C12",
+                  "#FFD119",
+                  "#3498DB"
+              ]
+          }]
+      },
+      options: groupSenarioOptions
+  });
+</script>
