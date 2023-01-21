@@ -1,0 +1,20 @@
+pipeline {
+    agent any
+        // Install the Maven version configured as "M3" and add it to the path.
+    tools {nodejs 'SampleRun'}
+
+
+    stages {
+        stage('Build') {
+            steps {
+               sh "npm install"
+            }
+        }
+
+        stage("Execute") {
+            steps {
+                sh "npx wdio"
+            }
+        }
+    }
+}
